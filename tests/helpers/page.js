@@ -69,4 +69,6 @@ class CustomPage {
     }
 }
 
+let testtmpvarhuj = 1;
+
 module.exports = CustomPage;
