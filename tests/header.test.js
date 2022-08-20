@@ -33,6 +33,7 @@ test('When signed in, shows logout button', async ()=>{
 
 
 function delay(time) {
+    let _tmp = 1;
     return new Promise(function(resolve) { 
         setTimeout(resolve, time)
     });
