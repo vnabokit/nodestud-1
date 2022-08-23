@@ -1,72 +1,86 @@
-const puppeteer = require('puppeteer');
-const sessionFactory = require('../factories/sessionFactory');
-const userFactory = require('../factories/userFactory');
+const puppeteer = require("puppeteer");
+const sessionFactory = require("../factories/sessionFactory");
+const userFactory = require("../factories/userFactory");
 
 class CustomPage {
-    constructor(page){
-        this.page = page;
-    }
+  constructor(page) {
+    this.page = page;
+  }
 
-    async login(){
-        const user = await userFactory();
-        const {session, sig} = sessionFactory(user);
-    
-        await this.page.setCookie({name: 'session', value: session, domain: 'localhost:3000/blogs' });
-        await this.page.setCookie({name: 'session.sig', value: sig, domain: 'localhost:3000/blogs' });
-        await this.page.goto('http://localhost:3000/blogs');      
-        await this.page.waitFor('a[href="/auth/logout"]');  
-    }
+  async login() {
+    const user = await userFactory();
+    const { session, sig } = sessionFactory(user);
 
-    async getContentsOf(selector){
-        return this.page.$eval(selector, el=>el.innerHTML);
-    }
+    await this.page.setCookie({
+      name: "session",
+      value: session,
+      domain: "localhost:3000",
+      url: "localhost:3000",
+    });
+    await this.page.setCookie({
+      name: "session.sig",
+      value: sig,
+      domain: "localhost:3000",
+      url: "localhost:3000",
+    });
+    await this.page.goto("http://localhost:3000/blogs");
+    await this.page.waitFor('a[href="/auth/logout"]');
+  }
 
-    async get(path){
-        return await this.page.evaluate(_path => {
-                return fetch(_path, {
-                method: 'GET',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-             }).then(res=>res.json());
-        }, path);
-    }
+  async getContentsOf(selector) {
+    return this.page.$eval(selector, (el) => el.innerHTML);
+  }
 
-    async post(path, data){
-        return await this.page.evaluate( (_path, _data) => {
-                return fetch(_path, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(_data)
-             }).then(res=>res.json());
-            }, path, data);
-    }
+  async get(path) {
+    return await this.page.evaluate((_path) => {
+      return fetch(_path, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((res) => res.json());
+    }, path);
+  }
 
-    async execRequests(actions){
-        return Promise.all(
-            actions.map(({method, path, data})=>{
-                return this[method](path, data);
-            })
-        );
-    }
+  async post(path, data) {
+    return await this.page.evaluate(
+      (_path, _data) => {
+        return fetch(_path, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(_data),
+        }).then((res) => res.json());
+      },
+      path,
+      data
+    );
+  }
 
-    static async build(){
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: ['--no-sandbox']
-        });
-        const page = await browser.newPage();
-        const customPage = new CustomPage(page);
-        return new Proxy(customPage, {
-            get: function(target, property){
-                return customPage[property] || browser[property] || page[property];
-            }
-        });
-    }
+  async execRequests(actions) {
+    return Promise.all(
+      actions.map(({ method, path, data }) => {
+        return this[method](path, data);
+      })
+    );
+  }
+
+  static async build() {
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox"],
+    });
+    const page = await browser.newPage();
+    const customPage = new CustomPage(page);
+    return new Proxy(customPage, {
+      get: function (target, property) {
+        return customPage[property] || browser[property] || page[property];
+      },
+    });
+  }
 }
 
 module.exports = CustomPage;
