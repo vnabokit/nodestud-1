@@ -14,14 +14,12 @@ class CustomPage {
     await this.page.setCookie({
       name: "session",
       value: session,
-      domain: "localhost:3000",
-      url: "localhost:3000",
+      domain: "http://localhost:3000",
     });
     await this.page.setCookie({
       name: "session.sig",
       value: sig,
-      domain: "localhost:3000",
-      url: "localhost:3000",
+      domain: "http://localhost:3000",
     });
     await this.page.goto("http://localhost:3000/blogs");
     await this.page.waitFor('a[href="/auth/logout"]');
