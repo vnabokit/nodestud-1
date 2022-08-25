@@ -7,7 +7,7 @@ class CustomPage {
   static async build() {
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox"],
+    //   args: ["--no-sandbox"],
     });
     const page = await browser.newPage();
     const customPage = new CustomPage(page);
@@ -36,7 +36,7 @@ class CustomPage {
       value: sig,
       domain: "localhost",
     });
-    await this.page.waitFor('a[href="/auth/google"]');
+    // await this.page.waitFor('a[href="/auth/google"]');
     await this.page.goto("http://localhost:3000/blogs");
     await this.page.waitFor('a[href="/auth/logout"]');
   }
