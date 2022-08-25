@@ -36,6 +36,7 @@ class CustomPage {
       value: sig,
       domain: "localhost",
     });
+    await this.page.waitFor('a[href="/auth/google"]');
     await this.page.goto("http://localhost:3000/blogs");
     await this.page.waitFor('a[href="/auth/logout"]');
   }
