@@ -13,20 +13,20 @@ afterEach(async()=>{
 });
 
 test('The header has the correct text', async ()=>{
-    // await page.waitFor('a.brand-logo');
-    // const text = await page.getContentsOf('a.brand-logo');
-    // expect(text).toEqual('Blogster');
+    await page.waitFor('a.brand-logo');
+    const text = await page.getContentsOf('a.brand-logo');
+    expect(text).toEqual('Blogster');
 });
 
-// test('Clicking login starts oauth flow', async ()=>{
-//     await page.waitFor('.right a');
-//     await page.click('.right a');
-//     const url = await page.url();
-//     expect(url).toMatch(/accounts\.google\.com/);
-// });
+test('Clicking login starts oauth flow', async ()=>{
+    await page.waitFor('.right a');
+    await page.click('.right a');
+    const url = await page.url();
+    expect(url).toMatch(/accounts\.google\.com/);
+});
 
-// test('When signed in, shows logout button', async ()=>{
-//     await page.login();
-//     const text = await page.getContentsOf('a[href="/auth/logout"]');
-//     expect(text).toEqual('Logout')
-// });
+test('When signed in, shows logout button', async ()=>{
+    await page.login();
+    const text = await page.getContentsOf('a[href="/auth/logout"]');
+    expect(text).toEqual('Logout')
+});
